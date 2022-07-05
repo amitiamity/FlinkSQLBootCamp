@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group 'com.learn'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+mainClassName = 'com.learn.FlinkSQLDemoApplication'
+
+configurations {
+    flinkShadowJar // dependencies which go into the shadowJar
+
+    // always exclude these (also from transitive dependencies) since they are provided by Flink
+    flinkShadowJar.exclude group: 'org.apache.flink', module: 'force-shading'
+    flinkShadowJar.exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    flinkShadowJar.exclude group: 'org.slf4j'
+    flinkShadowJar.exclude group: 'log4j'
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.apache.flink/flink-table-api-java-bridge
+    compileOnly group: 'org.apache.flink', name: 'flink-table-api-java-bridge', version: '1.15.0'
+    // https://mvnrepository.com/artifact/org.apache.flink/flink-table-common
+    compileOnly group: 'org.apache.flink', name: 'flink-table-common', version: '1.15.0'
+    // https://mvnrepository.com/artifact/org.apache.flink/flink-streaming-java
+   // compileOnly group: 'org.apache.flink', name: 'flink-streaming-java', version: '1.15.0'
+
+    // https://mvnrepository.com/artifact/org.apache.flink/flink-table-api-java
+    implementation group: 'org.apache.flink', name: 'flink-table-api-java', version: '1.15.0'
+
+
+    flinkShadowJar "org.apache.flink:flink-sql-connector-kafka:1.15.0"
+   // flinkShadowJar group: 'org.apache.flink', name: 'flink-sql-connector-kafka', version: '1.15.0'
+
+
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    // https://mvnrepository.com/artifact/org.apache.flink/flink-table-planner-blink
+    testImplementation group: 'org.apache.flink', name: 'flink-table-planner-blink_2.12', version: '1.13.6'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
